@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Priority Queue — MediPriority</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<div class="wrapper">
+    <div class="sidebar">
+        <div class="sidebar-logo">
+            <span class="logo-icon">🏥</span>
+            <h2>MediPriority</h2>
+            <span class="role-badge">Medical Staff</span>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-label">Main</div>
+            <a href="/dashboard"      class="nav-item"><span class="nav-icon">🏠</span> Dashboard</a>
+            <a href="/triage"         class="nav-item"><span class="nav-icon">🚨</span> Assign Triage</a>
+            <a href="/priority_queue" class="nav-item active"><span class="nav-icon">📋</span> Priority Queue</a>
+        </div>
+        <div class="sidebar-bottom">
+            <a href="/logout" class="nav-item logout"><span class="nav-icon">🚪</span> Logout</a>
+        </div>
+    </div>
+    <div class="main">
+        <div class="page-header">
+            <h2>📋 Patient Priority Queue</h2>
+            <p>Patients sorted by urgency — Urgent cases are seen first</p>
+        </div>
+
+        <div class="priority-legend">
+            <div class="legend-item">
+                <div class="legend-dot" style="background:var(--red)"></div>
+                Urgent — Immediate care needed
+            </div>
+            <div class="legend-item">
+                <div class="legend-dot" style="background:var(--yellow)"></div>
+                Priority — Attention soon
+            </div>
+            <div class="legend-item">
+                <div class="legend-dot" style="background:var(--green)"></div>
+                General — Routine check-up
+            </div>
+        </div>
+
+        <div class="chart-box">
+            <div class="table-wrap">
+                <table>
+                    <thead><tr>
+                        <th>#</th><th>Patient ID</th><th>Name</th>
+                        <th>Age</th><th>Gender</th><th>Contact</th><th>Priority</th>
+                    </tr></thead>
+                    <tbody>
+                    {% for p in patients %}
+                    <tr>
+                        <td style="color:var(--gray-400); font-weight:600">{{ loop.index }}</td>
+                        <td><strong>{{ p.id }}</strong></td>
+                        <td>{{ p.name }}</td>
+                        <td>{{ p.age }}</td>
+                        <td>{{ p.gender }}</td>
+                        <td>{{ p.contact }}</td>
+                        <td>
+                            {% if p.condition == "Urgent" %}
+                                <span class="badge badge-red">🔴 Urgent</span>
+                            {% elif p.condition == "Priority" %}
+                                <span class="badge badge-yellow">🟡 Priority</span>
+                            {% else %}
+                                <span class="badge badge-green">🟢 General</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    {% if not patients %}
+                    <tr><td colspan="7">
+                        <div class="empty-state">
+                            <div class="empty-icon">📋</div>
+                            <p>No patients in queue yet.</p>
+                        </div>
+                    </td></tr>
+                    {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

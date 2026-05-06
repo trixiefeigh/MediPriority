@@ -1,0 +1,74 @@
+<!-- VIEW PATIENTS -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>View Patients — MediPriority</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<div class="wrapper">
+    <div class="sidebar">
+        <div class="sidebar-logo">
+            <span class="logo-icon">🏥</span>
+            <h2>MediPriority</h2>
+            <span class="role-badge">Receptionist</span>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-label">Main</div>
+            <a href="/dashboard"            class="nav-item"><span class="nav-icon">🏠</span> Dashboard</a>
+            <a href="/add_patient"          class="nav-item"><span class="nav-icon">➕</span> Add Patient</a>
+            <a href="/view_patients"        class="nav-item active"><span class="nav-icon">👥</span> View Patients</a>
+            <a href="/schedule_appointment" class="nav-item"><span class="nav-icon">📅</span> Schedule Appointment</a>
+            <a href="/view_appointments"    class="nav-item"><span class="nav-icon">📆</span> View Appointments</a>
+        </div>
+        <div class="sidebar-bottom">
+            <a href="/logout" class="nav-item logout"><span class="nav-icon">🚪</span> Logout</a>
+        </div>
+    </div>
+    <div class="main">
+        <div class="page-header">
+            <h2>👥 Patient List</h2>
+            <p>All registered patients in the system</p>
+        </div>
+        <div class="chart-box">
+            <div class="table-wrap">
+                <table>
+                    <thead><tr>
+                        <th>Patient ID</th><th>Name</th><th>Age</th>
+                        <th>Gender</th><th>Contact</th><th>Condition</th>
+                    </tr></thead>
+                    <tbody>
+                    {% for p in patients %}
+                    <tr>
+                        <td><strong>{{ p.id }}</strong></td>
+                        <td>{{ p.name }}</td>
+                        <td>{{ p.age }}</td>
+                        <td>{{ p.gender }}</td>
+                        <td>{{ p.contact }}</td>
+                        <td>
+                            {% if p.condition == "Urgent" %}
+                                <span class="badge badge-red">🔴 Urgent</span>
+                            {% elif p.condition == "Priority" %}
+                                <span class="badge badge-yellow">🟡 Priority</span>
+                            {% else %}
+                                <span class="badge badge-green">🟢 General</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    {% if not patients %}
+                    <tr><td colspan="6">
+                        <div class="empty-state">
+                            <div class="empty-icon">👥</div>
+                            <p>No patients registered yet.</p>
+                        </div>
+                    </td></tr>
+                    {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Triage — MediPriority</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<div class="wrapper">
+    <div class="sidebar">
+        <div class="sidebar-logo">
+            <span class="logo-icon">🏥</span>
+            <h2>MediPriority</h2>
+            <span class="role-badge">Medical Staff</span>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-label">Main</div>
+            <a href="/dashboard"     class="nav-item"><span class="nav-icon">🏠</span> Dashboard</a>
+            <a href="/triage"        class="nav-item active"><span class="nav-icon">🚨</span> Assign Triage</a>
+            <a href="/priority_queue" class="nav-item"><span class="nav-icon">📋</span> Priority Queue</a>
+        </div>
+        <div class="sidebar-bottom">
+            <a href="/logout" class="nav-item logout"><span class="nav-icon">🚪</span> Logout</a>
+        </div>
+    </div>
+    <div class="main">
+        <div class="page-header">
+            <h2>🚨 Assign Triage Priority</h2>
+            <p>Update a patient's urgency level based on their condition</p>
+        </div>
+
+        {% if message %}
+        <div class="alert {{ 'alert-success' if message.type == 'success' else 'alert-error' }}">
+            {{ '✅' if message.type == 'success' else '⚠️' }} {{ message.text }}
+        </div>
+        {% endif %}
+
+        <div class="form-card">
+            <form action="/triage" method="POST">
+                <div class="form-section">
+                    <div class="form-section-title">👤 Select Patient</div>
+                    <div class="form-group">
+                        <label>Patient</label>
+                        <select name="patient_id" required>
+                            <option value="">-- Select Patient --</option>
+                            {% for p in patients %}
+                                <option value="{{ p.id }}">
+                                    {{ p.id }} — {{ p.name }}
+                                    (Currently: {{ p.condition }})
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <div class="form-section-title">🎯 Assign Priority Level</div>
+                    <div class="form-group">
+                        <label>Triage Level</label>
+                        <select name="condition" required>
+                            <option value="Urgent">🔴 Urgent — Needs immediate attention</option>
+                            <option value="Priority">🟡 Priority — Needs attention soon</option>
+                            <option value="General">🟢 General — Routine check-up</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-save">🚨 Assign Priority</button>
+                    <a href="/priority_queue" class="btn btn-back">📋 View Queue</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>
