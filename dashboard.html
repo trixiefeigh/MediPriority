@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Dashboard — MediPriority</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+<div class="wrapper">
+
+    <!-- ── SIDEBAR ── -->
+    <div class="sidebar">
+        <div class="sidebar-logo">
+            <span class="logo-icon">🏥</span>
+            <h2>MediPriority</h2>
+            <span class="role-badge">{{ role.replace('_', ' ') }}</span>
+        </div>
+
+        <div class="sidebar-section">
+            <div class="sidebar-section-label">Main</div>
+
+            <a href="/dashboard" class="nav-item active">
+                <span class="nav-icon">🏠</span> Dashboard
+            </a>
+
+            {% if role == "receptionist" %}
+            <a href="/add_patient" class="nav-item">
+                <span class="nav-icon">➕</span> Add Patient
+            </a>
+            <a href="/view_patients" class="nav-item">
+                <span class="nav-icon">👥</span> View Patients
+            </a>
+            <a href="/schedule_appointment" class="nav-item">
+                <span class="nav-icon">📅</span> Schedule Appointment
+            </a>
+            <a href="/view_appointments" class="nav-item">
+                <span class="nav-icon">📆</span> View Appointments
+            </a>
+
+            {% elif role == "doctor" %}
+            <a href="/add_history" class="nav-item">
+                <span class="nav-icon">📝</span> Add History
+            </a>
+            <a href="/search_history" class="nav-item">
+                <span class="nav-icon">🔍</span> Search History
+            </a>
+            <a href="/view_appointments" class="nav-item">
+                <span class="nav-icon">📋</span> View Schedule
+            </a>
+
+            {% elif role == "medical_staff" %}
+            <a href="/triage" class="nav-item">
+                <span class="nav-icon">🚨</span> Assign Triage
+            </a>
+            <a href="/priority_queue" class="nav-item">
+                <span class="nav-icon">📋</span> Priority Queue
+            </a>
+            {% endif %}
+        </div>
+
+        <div class="sidebar-bottom">
+            <a href="/logout" class="nav-item logout">
+                <span class="nav-icon">🚪</span> Logout
+            </a>
+        </div>
+    </div>
+
+    <!-- ── MAIN CONTENT ── -->
+    <div class="main">
+
+        <!-- Topbar -->
+        <div class="topbar">
+            <div class="topbar-left">
+                <h3>Welcome back, {{ username }}! 👋</h3>
+                <div class="topbar-date">
+                    📅 <span id="currentDate"></span>
+                </div>
+            </div>
+            <div class="topbar-right">
+                <div class="topbar-avatar">
+                    {{ username[0].upper() }}
+                </div>
+            </div>
+        </div>
+
+        <!-- Row 1 — 3 Main Cards -->
+        <div class="cards">
+            <div class="card blue">
+                <div class="card-icon-wrap">👥</div>
+                <div class="card-info">
+                    <div class="card-label">Total Patients</div>
+                    <div class="card-number">{{ stats.total_patients }}</div>
+                    <div class="card-sub">Registered in system</div>
+                </div>
+            </div>
+            <div class="card teal">
+                <div class="card-icon-wrap">📅</div>
+                <div class="card-info">
+                    <div class="card-label">Appointments Today</div>
+                    <div class="card-number">{{ stats.appointments_today }}</div>
+                    <div class="card-sub">Scheduled for today</div>
+                </div>
+            </div>
+            <div class="card purple">
+                <div class="card-icon-wrap">📆</div>
+                <div class="card-info">
+                    <div class="card-label">Total Appointments</div>
+                    <div class="card-number">{{ stats.total_appointments }}</div>
+                    <div class="card-sub">All time bookings</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Row 2 — 3 Triage Cards -->
+        <div class="cards">
+            <div class="card red">
+                <div class="card-icon-wrap">🚨</div>
+                <div class="card-info">
+                    <div class="card-label">Urgent Cases</div>
+                    <div class="card-number">{{ stats.urgent }}</div>
+                    <div class="card-sub">Needs immediate care</div>
+                </div>
+            </div>
+            <div class="card yellow">
+                <div class="card-icon-wrap">⚠️</div>
+                <div class="card-info">
+                    <div class="card-label">Priority Cases</div>
+                    <div class="card-number">{{ stats.priority }}</div>
+                    <div class="card-sub">Needs attention soon</div>
+                </div>
+            </div>
+            <div class="card green">
+                <div class="card-icon-wrap">✅</div>
+                <div class="card-info">
+                    <div class="card-label">General Cases</div>
+                    <div class="card-number">{{ stats.general }}</div>
+                    <div class="card-sub">Routine check-ups</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Row -->
+        <div class="bottom-grid">
+
+            <!-- Pie Chart -->
+            <div class="chart-box">
+                <div class="chart-box-header">
+                    <h4>Patient Priority Breakdown</h4>
+                    <p>Distribution of triage levels across all patients</p>
+                </div>
+                <canvas id="priorityChart" height="220"></canvas>
+            </div>
+
+            <!-- Bar Chart -->
+            <div class="chart-box">
+                <div class="chart-box-header">
+                    <h4>Appointments Per Doctor</h4>
+                    <p>Total bookings assigned to each doctor</p>
+                </div>
+                <canvas id="doctorChart" height="220"></canvas>
+            </div>
+
+            <!-- Recent Patients Table -->
+            <div class="chart-box wide-box">
+                <div class="chart-box-header">
+                    <h4>Recently Added Patients</h4>
+                    <p>Last 5 patients registered in the system</p>
+                </div>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Patient ID</th>
+                                <th>Name</th>
+                                <th>Age</th>
+                                <th>Gender</th>
+                                <th>Condition</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for p in recent_patients %}
+                            <tr>
+                                <td><strong>{{ p.id }}</strong></td>
+                                <td>{{ p.name }}</td>
+                                <td>{{ p.age }}</td>
+                                <td>{{ p.gender }}</td>
+                                <td>
+                                    {% if p.condition == "Urgent" %}
+                                        <span class="badge badge-red">🔴 Urgent</span>
+                                    {% elif p.condition == "Priority" %}
+                                        <span class="badge badge-yellow">🟡 Priority</span>
+                                    {% else %}
+                                        <span class="badge badge-green">🟢 General</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            {% if not recent_patients %}
+                            <tr>
+                                <td colspan="5">
+                                    <div class="empty-state">
+                                        <div class="empty-icon">👥</div>
+                                        <p>No patients registered yet.</p>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    // Current date
+    document.getElementById("currentDate").textContent =
+        new Date().toLocaleDateString('en-US', {
+            weekday: 'long', year: 'numeric',
+            month: 'long', day: 'numeric'
+        });
+
+    // Doughnut Chart
+    const urgent   = {{ stats.urgent }};
+    const priority = {{ stats.priority }};
+    const general  = {{ stats.general }};
+
+    if (urgent + priority + general > 0) {
+        new Chart(document.getElementById("priorityChart"), {
+            type: "doughnut",
+            data: {
+                labels: ["Urgent", "Priority", "General"],
+                datasets: [{
+                    data: [urgent, priority, general],
+                    backgroundColor: ["#fecaca", "#fde68a", "#bbf7d0"],
+                    borderColor:     ["#dc2626", "#ca8a04", "#16a34a"],
+                    borderWidth: 2,
+                    hoverOffset: 6
+                }]
+            },
+            options: {
+                cutout: "65%",
+                plugins: {
+                    legend: {
+                        position: "bottom",
+                        labels: {
+                            padding: 16,
+                            font: { family: 'DM Sans', size: 12 },
+                            usePointStyle: true
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // Bar Chart
+    const doctorLabels = {{ doctor_labels | tojson }};
+    const doctorCounts = {{ doctor_counts | tojson }};
+
+    if (doctorLabels.length > 0) {
+        new Chart(document.getElementById("doctorChart"), {
+            type: "bar",
+            data: {
+                labels: doctorLabels,
+                datasets: [{
+                    label: "Appointments",
+                    data: doctorCounts,
+                    backgroundColor: "#bfdbfe",
+                    borderColor: "#2563eb",
+                    borderWidth: 2,
+                    borderRadius: 8,
+                    borderSkipped: false
+                }]
+            },
+            options: {
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1,
+                            font: { family: 'DM Sans', size: 12 }
+                        },
+                        grid: { color: "#f1f5f9" }
+                    },
+                    x: {
+                        ticks: { font: { family: 'DM Sans', size: 12 } },
+                        grid: { display: false }
+                    }
+                }
+            }
+        });
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>View Appointments — MediPriority</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<div class="wrapper">
+    <div class="sidebar">
+        <div class="sidebar-logo">
+            <span class="logo-icon">🏥</span>
+            <h2>MediPriority</h2>
+            <span class="role-badge">{{ role.replace('_', ' ') }}</span>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-label">Main</div>
+            <a href="/dashboard" class="nav-item"><span class="nav-icon">🏠</span> Dashboard</a>
+
+            {% if role == "receptionist" %}
+                <a href="/add_patient"          class="nav-item"><span class="nav-icon">➕</span> Add Patient</a>
+                <a href="/view_patients"        class="nav-item"><span class="nav-icon">👥</span> View Patients</a>
+                <a href="/schedule_appointment" class="nav-item"><span class="nav-icon">📅</span> Schedule Appointment</a>
+                <a href="/view_appointments"    class="nav-item active"><span class="nav-icon">📆</span> View Appointments</a>
+
+            {% elif role == "doctor" %}
+                <a href="/add_history"       class="nav-item"><span class="nav-icon">📝</span> Add History</a>
+                <a href="/search_history"    class="nav-item"><span class="nav-icon">🔍</span> Search History</a>
+                <a href="/view_appointments" class="nav-item active"><span class="nav-icon">📋</span> View Schedule</a>
+
+            {% elif role == "medical_staff" %}
+                <a href="/triage"         class="nav-item"><span class="nav-icon">🚨</span> Assign Triage</a>
+                <a href="/priority_queue" class="nav-item"><span class="nav-icon">📋</span> Priority Queue</a>
+            {% endif %}
+        </div>
+        <div class="sidebar-bottom">
+            <a href="/logout" class="nav-item logout"><span class="nav-icon">🚪</span> Logout</a>
+        </div>
+    </div>
+
+    <div class="main">
+        <div class="page-header">
+            <h2>📆 Appointment Schedule</h2>
+            <p>All appointments sorted by date and time</p>
+        </div>
+        <div class="chart-box">
+            <div class="table-wrap">
+                <table>
+                    <thead><tr>
+                        <th>Appt. ID</th><th>Patient</th><th>Doctor</th>
+                        <th>Date</th><th>Time</th><th>Reason</th><th>Status</th>
+                    </tr></thead>
+                    <tbody>
+                    {% for a in appointments %}
+                    <tr>
+                        <td><strong>{{ a.appointment_id }}</strong></td>
+                        <td>{{ a.patient_name }} <span style="color:var(--gray-400)">({{ a.patient_id }})</span></td>
+                        <td>{{ a.doctor }}</td>
+                        <td>{{ a.date }}</td>
+                        <td>{{ a.time }}</td>
+                        <td>{{ a.reason }}</td>
+                        <td><span class="badge badge-blue">✅ {{ a.status }}</span></td>
+                    </tr>
+                    {% endfor %}
+                    {% if not appointments %}
+                    <tr><td colspan="7">
+                        <div class="empty-state">
+                            <div class="empty-icon">📅</div>
+                            <p>No appointments scheduled yet.</p>
+                        </div>
+                    </td></tr>
+                    {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

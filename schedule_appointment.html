@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Schedule Appointment — MediPriority</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<div class="wrapper">
+    <div class="sidebar">
+        <div class="sidebar-logo">
+            <span class="logo-icon">🏥</span>
+            <h2>MediPriority</h2>
+            <span class="role-badge">Receptionist</span>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-label">Main</div>
+            <a href="/dashboard"            class="nav-item"><span class="nav-icon">🏠</span> Dashboard</a>
+            <a href="/add_patient"          class="nav-item"><span class="nav-icon">➕</span> Add Patient</a>
+            <a href="/view_patients"        class="nav-item"><span class="nav-icon">👥</span> View Patients</a>
+            <a href="/schedule_appointment" class="nav-item active"><span class="nav-icon">📅</span> Schedule Appointment</a>
+            <a href="/view_appointments"    class="nav-item"><span class="nav-icon">📆</span> View Appointments</a>
+        </div>
+        <div class="sidebar-bottom">
+            <a href="/logout" class="nav-item logout"><span class="nav-icon">🚪</span> Logout</a>
+        </div>
+    </div>
+    <div class="main">
+        <div class="page-header">
+            <h2>📅 Schedule Appointment</h2>
+            <p>Book a new appointment and auto-check for conflicts</p>
+        </div>
+
+        {% if message %}
+        <div class="alert {{ 'alert-success' if message.type == 'success' else 'alert-error' }}">
+            {{ '✅' if message.type == 'success' else '⚠️' }} {{ message.text }}
+        </div>
+        {% endif %}
+
+        <div class="form-card">
+            <form action="/schedule_appointment" method="POST">
+
+                <div class="form-section">
+                    <div class="form-section-title">👤 Patient & Doctor</div>
+                    <div class="form-group">
+                        <label>Select Patient</label>
+                        <select name="patient_id" required>
+                            <option value="">-- Select Patient --</option>
+                            {% for p in patients %}
+                                <option value="{{ p.id }}">{{ p.id }} — {{ p.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Assign Doctor</label>
+                        <select name="doctor" required>
+                            <option value="">-- Select Doctor --</option>
+                            <option value="Dr. Santos">Dr. Santos</option>
+                            <option value="Dr. Reyes">Dr. Reyes</option>
+                            <option value="Dr. Cruz">Dr. Cruz</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <div class="form-section-title">📅 Date & Time</div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Date</label>
+                            <input type="date" name="date" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Time Slot</label>
+                            <select name="time" required>
+                                <option value="">-- Select Time --</option>
+                                <option value="08:00 AM">08:00 AM</option>
+                                <option value="08:30 AM">08:30 AM</option>
+                                <option value="09:00 AM">09:00 AM</option>
+                                <option value="09:30 AM">09:30 AM</option>
+                                <option value="10:00 AM">10:00 AM</option>
+                                <option value="10:30 AM">10:30 AM</option>
+                                <option value="11:00 AM">11:00 AM</option>
+                                <option value="11:30 AM">11:30 AM</option>
+                                <option value="01:00 PM">01:00 PM</option>
+                                <option value="01:30 PM">01:30 PM</option>
+                                <option value="02:00 PM">02:00 PM</option>
+                                <option value="02:30 PM">02:30 PM</option>
+                                <option value="03:00 PM">03:00 PM</option>
+                                <option value="03:30 PM">03:30 PM</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Reason for Visit</label>
+                        <input type="text" name="reason" placeholder="e.g. Follow-up check-up, Annual physical exam" required>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-save">📅 Book Appointment</button>
+                    <a href="/dashboard" class="btn btn-back">← Back</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

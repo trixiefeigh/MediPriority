@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Search Patient History — MediPriority</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<div class="wrapper">
+    <div class="sidebar">
+        <div class="sidebar-logo">
+            <span class="logo-icon">🏥</span>
+            <h2>MediPriority</h2>
+            <span class="role-badge">Doctor</span>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-label">Main</div>
+            <a href="/dashboard"         class="nav-item"><span class="nav-icon">🏠</span> Dashboard</a>
+            <a href="/add_history"       class="nav-item"><span class="nav-icon">📝</span> Add History</a>
+            <a href="/search_history"    class="nav-item active"><span class="nav-icon">🔍</span> Search History</a>
+            <a href="/view_appointments" class="nav-item"><span class="nav-icon">📋</span> View Schedule</a>
+        </div>
+        <div class="sidebar-bottom">
+            <a href="/logout" class="nav-item logout"><span class="nav-icon">🚪</span> Logout</a>
+        </div>
+    </div>
+    <div class="main">
+        <div class="page-header">
+            <h2>🔍 Search Patient History</h2>
+            <p>Recursively search and retrieve a patient's full medical record</p>
+        </div>
+
+        <div class="form-card" style="margin-bottom: 24px;">
+            <form action="/search_history" method="POST">
+                <div class="form-section" style="border:none; margin:0; padding:0;">
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label>Select Patient to Search</label>
+                        <select name="patient_id" required>
+                            <option value="">-- Select Patient --</option>
+                            {% for p in patients %}
+                                <option value="{{ p.id }}"
+                                    {% if p.id == search_id %}selected{% endif %}>
+                                    {{ p.id }} — {{ p.name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="form-actions" style="padding-top: 16px; margin-top: 16px;">
+                    <button type="submit" class="btn btn-save">🔍 Search Records</button>
+                    <a href="/dashboard" class="btn btn-back">← Back</a>
+                </div>
+            </form>
+        </div>
+
+        <!-- Results -->
+        {% if result %}
+            {% if result.error %}
+            <div class="alert alert-error">⚠️ {{ result.error }}</div>
+            {% else %}
+            <div class="history-box">
+                <h3>{{ result.name }} <span style="font-weight:400; color:var(--gray-400)">({{ result.id }})</span></h3>
+
+                <div class="history-meta">
+                    <div class="history-meta-item"><strong>Age:</strong> {{ result.age }}</div>
+                    <div class="history-meta-item"><strong>Gender:</strong> {{ result.gender }}</div>
+                    <div class="history-meta-item"><strong>Contact:</strong> {{ result.contact }}</div>
+                    <div class="history-meta-item">
+                        <strong>Condition:</strong>
+                        {% if result.condition == "Urgent" %}
+                            <span class="badge badge-red">🔴 Urgent</span>
+                        {% elif result.condition == "Priority" %}
+                            <span class="badge badge-yellow">🟡 Priority</span>
+                        {% else %}
+                            <span class="badge badge-green">🟢 General</span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <h4 style="font-size:14px; font-weight:700; color:var(--gray-700); margin-bottom:14px;">
+                    📋 Medical History
+                </h4>
+
+                {% if history %}
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr>
+                            <th>Date</th><th>Diagnosis</th><th>Medication</th><th>Notes</th>
+                        </tr></thead>
+                        <tbody>
+                        {% for h in history %}
+                        <tr>
+                            <td>{{ h.date }}</td>
+                            <td>{{ h.diagnosis }}</td>
+                            <td>{{ h.medication }}</td>
+                            <td>{{ h.notes or '—' }}</td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="empty-state">
+                    <div class="empty-icon">📋</div>
+                    <p>No medical history recorded for this patient yet.</p>
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+        {% endif %}
+
+    </div>
+</div>
+</body>
+</html>

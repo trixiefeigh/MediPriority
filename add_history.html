@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Add Medical History — MediPriority</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<div class="wrapper">
+    <div class="sidebar">
+        <div class="sidebar-logo">
+            <span class="logo-icon">🏥</span>
+            <h2>MediPriority</h2>
+            <span class="role-badge">Doctor</span>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-label">Main</div>
+            <a href="/dashboard"      class="nav-item"><span class="nav-icon">🏠</span> Dashboard</a>
+            <a href="/add_history"    class="nav-item active"><span class="nav-icon">📝</span> Add History</a>
+            <a href="/search_history" class="nav-item"><span class="nav-icon">🔍</span> Search History</a>
+            <a href="/view_appointments" class="nav-item"><span class="nav-icon">📋</span> View Schedule</a>
+        </div>
+        <div class="sidebar-bottom">
+            <a href="/logout" class="nav-item logout"><span class="nav-icon">🚪</span> Logout</a>
+        </div>
+    </div>
+
+    <div class="main">
+        <div class="page-header">
+            <h2>📝 Add Medical History</h2>
+            <p>Record a patient's visit diagnosis and medication</p>
+        </div>
+
+        {% if message %}
+        <div class="alert {{ 'alert-success' if message.type == 'success' else 'alert-error' }}">
+            {{ '✅' if message.type == 'success' else '⚠️' }} {{ message.text }}
+        </div>
+        {% endif %}
+
+        <div class="form-card">
+            <form action="/add_history" method="POST">
+
+                <!-- Patient Info -->
+                <div class="form-section">
+                    <div class="form-section-title">👤 Patient</div>
+                    <div class="form-group">
+                        <label>Select Patient</label>
+                        <select name="patient_id" required>
+                            <option value="">-- Select Patient --</option>
+                            {% for p in patients %}
+                                <option value="{{ p.id }}">{{ p.id }} — {{ p.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Date of Visit</label>
+                        <input type="date" name="date" required>
+                    </div>
+                </div>
+
+                <!-- Diagnosis -->
+                <div class="form-section">
+                    <div class="form-section-title">🩺 Diagnosis & Treatment</div>
+                    <div class="form-group">
+                        <label>Diagnosis</label>
+                        <input type="text" name="diagnosis" placeholder="e.g. Hypertension, Stage 1" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Medication Prescribed</label>
+                        <input type="text" name="medication" placeholder="e.g. Amlodipine 5mg, once daily" required>
+                    </div>
+                </div>
+
+                <!-- Notes -->
+                <div class="form-section">
+                    <div class="form-section-title">📋 Clinical Notes</div>
+                    <div class="form-group">
+                        <label>Additional Notes</label>
+                        <textarea name="notes" placeholder="e.g. Patient advised to reduce sodium intake. Follow-up in 2 weeks."></textarea>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-save">💾 Save History</button>
+                    <a href="/dashboard" class="btn btn-back">← Back</a>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

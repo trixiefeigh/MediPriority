@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Add Patient — MediPriority</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<div class="wrapper">
+    <div class="sidebar">
+        <div class="sidebar-logo">
+            <span class="logo-icon">🏥</span>
+            <h2>MediPriority</h2>
+            <span class="role-badge">Receptionist</span>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-label">Main</div>
+            <a href="/dashboard"           class="nav-item"><span class="nav-icon">🏠</span> Dashboard</a>
+            <a href="/add_patient"         class="nav-item active"><span class="nav-icon">➕</span> Add Patient</a>
+            <a href="/view_patients"       class="nav-item"><span class="nav-icon">👥</span> View Patients</a>
+            <a href="/schedule_appointment" class="nav-item"><span class="nav-icon">📅</span> Schedule Appointment</a>
+            <a href="/view_appointments"   class="nav-item"><span class="nav-icon">📆</span> View Appointments</a>
+        </div>
+        <div class="sidebar-bottom">
+            <a href="/logout" class="nav-item logout"><span class="nav-icon">🚪</span> Logout</a>
+        </div>
+    </div>
+
+    <div class="main">
+        <div class="page-header">
+            <h2>➕ Add New Patient</h2>
+            <p>Register a new patient into the clinic system</p>
+        </div>
+
+        {% if message %}
+        <div class="alert {{ 'alert-success' if message.type == 'success' else 'alert-error' }}">
+            {{ '✅' if message.type == 'success' else '⚠️' }} {{ message.text }}
+        </div>
+        {% endif %}
+
+        <div class="form-card">
+            <form action="/add_patient" method="POST">
+
+                <!-- Patient Info Section -->
+                <div class="form-section">
+                    <div class="form-section-title">👤 Patient Information</div>
+
+                    <div class="form-group">
+                        <label>Patient ID</label>
+                        <input type="text" name="patient_id" placeholder="e.g. P001" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Full Name</label>
+                        <input type="text" name="name" placeholder="e.g. Juan Dela Cruz" required>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Age</label>
+                            <input type="number" name="age" placeholder="e.g. 35" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Gender</label>
+                            <select name="gender">
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Contact Number</label>
+                        <input type="text" name="contact" placeholder="e.g. 09123456789" required>
+                    </div>
+                </div>
+
+                <!-- Triage Section -->
+                <div class="form-section">
+                    <div class="form-section-title">🚨 Initial Triage Level</div>
+                    <div class="form-group">
+                        <label>Condition / Triage Level</label>
+                        <select name="condition">
+                            <option value="Urgent">🔴 Urgent — Needs immediate attention</option>
+                            <option value="Priority">🟡 Priority — Needs attention soon</option>
+                            <option value="General" selected>🟢 General — Routine check-up</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-save">💾 Save Patient</button>
+                    <a href="/dashboard" class="btn btn-back">← Back</a>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>
